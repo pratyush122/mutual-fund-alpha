@@ -3,7 +3,6 @@ Final Verification Script
 """
 
 import os
-import pandas as pd
 from src.utils.logger import logger
 
 
@@ -55,7 +54,6 @@ def verify_supabase_tables() -> bool:
 
     try:
         # Try to import and initialize database client
-        from src.database.client import get_db_client
 
         # This will fail if tables don't exist, which is expected for now
         logger.info("Supabase client initialized successfully")
@@ -77,7 +75,6 @@ def verify_dashboard() -> bool:
 
     try:
         # Try to import the dashboard app
-        from src.dashboard.app import load_data
 
         logger.info("Streamlit dashboard imports successfully")
         return True

@@ -4,8 +4,7 @@ Test Factor Model Module (Fixed Version)
 
 import pandas as pd
 import os
-from typing import List, Dict
-from src.analysis.factor_model import run_rolling_regressions, FactorResult
+from src.analysis.factor_model import run_rolling_regressions
 from src.utils.logger import logger
 
 

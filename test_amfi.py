@@ -1,5 +1,4 @@
 import requests
-import json
 
 
 def test_amfi_api():

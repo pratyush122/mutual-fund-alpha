@@ -8,7 +8,6 @@ import zipfile
 import os
 from io import BytesIO
 from typing import Optional
-import logging
 from src.utils.retry import retry
 from src.utils.cache import Cache
 from src.utils.logger import logger

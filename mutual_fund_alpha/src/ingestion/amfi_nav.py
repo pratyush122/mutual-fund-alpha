@@ -4,11 +4,8 @@ AMFI NAV Data Ingestion Module
 
 import requests
 import pandas as pd
-import json
 import os
 from typing import Dict, List, Optional
-from datetime import datetime
-import logging
 from src.utils.retry import retry
 from src.utils.cache import Cache
 from src.utils.logger import logger

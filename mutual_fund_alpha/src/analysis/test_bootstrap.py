@@ -4,7 +4,6 @@ Test Bootstrap Significance Test Module
 
 import pandas as pd
 import os
-from typing import List, Dict
 from src.analysis.bootstrap_test import perform_bootstrap_tests, classify_funds_by_skill
 from src.utils.logger import logger
 
@@ -67,7 +66,7 @@ def test_bootstrap_significance() -> None:
             logger.info(f"Saved fund classifications to {classification_file}")
 
             # Show summary
-            print(f"\nFund classification summary:")
+            print("\nFund classification summary:")
             verdict_counts = fund_classifications["overall_verdict"].value_counts()
             for verdict, count in verdict_counts.items():
                 print(f"  {verdict}: {count} funds")

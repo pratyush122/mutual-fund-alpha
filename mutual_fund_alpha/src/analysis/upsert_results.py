@@ -3,7 +3,6 @@ Upsert Alpha Results to Supabase Module
 """
 
 import pandas as pd
-import numpy as np
 import os
 import json
 from typing import List, Dict
@@ -88,11 +87,6 @@ def prepare_alpha_results_for_upsert(
                 fund_data["percentile_rank"].iloc[0]
                 if not fund_data["percentile_rank"].isnull().all()
                 else 0
-            )
-            verdict = (
-                fund_data["overall_verdict"].iloc[0]
-                if not fund_data["overall_verdict"].isnull().all()
-                else "Unknown"
             )
 
             # Prepare factor exposures as JSON

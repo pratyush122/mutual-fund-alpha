@@ -5,8 +5,7 @@ Data Validation Module
 import pandas as pd
 import os
 import json
-from typing import Dict, List
-import logging
+from typing import Dict
 from src.utils.logger import logger
 
 

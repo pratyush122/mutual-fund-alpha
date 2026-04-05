@@ -3,7 +3,6 @@ Database Migration Script
 """
 
 import os
-from supabase import create_client
 from src.utils.logger import logger
 from dotenv import load_dotenv
 
@@ -24,9 +23,6 @@ def run_migrations() -> None:
             raise ValueError(
                 "SUPABASE_URL and SUPABASE_KEY must be set in environment variables"
             )
-
-        # Create Supabase client
-        client = create_client(url, key)
 
         # Read migration file
         migration_file = (
@@ -78,9 +74,6 @@ def run_migrations_via_sql() -> None:
             raise ValueError(
                 "SUPABASE_URL and SUPABASE_KEY must be set in environment variables"
             )
-
-        # Create Supabase client
-        client = create_client(url, key)
 
         # Read migration file
         migration_file = (

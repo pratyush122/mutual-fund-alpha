@@ -3,14 +3,13 @@ Main entry point for the Mutual Fund Alpha Decomposition Tool.
 """
 
 import sys
-import os
 from pathlib import Path
 
 # Add src to path so we can import our modules
 sys.path.insert(0, str(Path(__file__).parent / "mutual_fund_alpha" / "src"))
 
 from src.utils.logger import logger
-from src.utils.checkpoint import read_checkpoint, write_checkpoint
+from src.utils.checkpoint import read_checkpoint
 
 
 def main():

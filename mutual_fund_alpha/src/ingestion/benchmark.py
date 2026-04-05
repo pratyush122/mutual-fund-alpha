@@ -6,7 +6,6 @@ import pandas as pd
 import yfinance as yf
 import os
 from typing import Optional
-import logging
 from src.utils.retry import retry
 from src.utils.cache import Cache
 from src.utils.logger import logger

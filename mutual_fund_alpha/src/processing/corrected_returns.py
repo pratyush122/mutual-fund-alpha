@@ -5,7 +5,7 @@ Corrected Return Computation Module
 import pandas as pd
 import numpy as np
 import os
-from typing import Dict, List, Optional
+from typing import List
 from src.utils.logger import logger
 
 
@@ -114,7 +114,7 @@ def main():
         df_with_rolling = compute_rolling_returns(df_with_returns, windows=[21, 63])
 
         # Save processed data (skip trading calendar alignment for now)
-        output_file = save_processed_returns(df_with_rolling)
+        save_processed_returns(df_with_rolling)
         logger.info("Return computation pipeline completed successfully")
 
         print(f"Processed {len(df_with_rolling)} records")

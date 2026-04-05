@@ -3,8 +3,6 @@ Database Table Setup Script
 """
 
 import os
-import json
-from supabase import create_client
 from src.utils.logger import logger
 from dotenv import load_dotenv
 
@@ -25,9 +23,6 @@ def create_tables() -> None:
             raise ValueError(
                 "SUPABASE_URL and SUPABASE_KEY must be set in environment variables"
             )
-
-        # Create Supabase client
-        client = create_client(url, key)
 
         # For Supabase, we need to use the REST API to create tables
         # This is a workaround since we can't run raw SQL directly

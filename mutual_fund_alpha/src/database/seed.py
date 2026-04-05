@@ -4,7 +4,6 @@ Database Seeding Script
 
 import pandas as pd
 import os
-from typing import List, Dict
 from src.database.client import get_db_client, DatabaseClient
 from src.utils.logger import logger
 

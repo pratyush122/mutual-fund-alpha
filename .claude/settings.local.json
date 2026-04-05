@@ -25,7 +25,12 @@
       "Bash(C:\\\\Program Files\\\\GitHub CLI\\\\gh.exe run:*)",
       "Bash(\"C:\\\\Program Files\\\\GitHub CLI\\\\gh.exe\" run view 23997506505 --log)",
       "Bash(pip list:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(pip install:*)",
+      "Bash(pytest:*)",
+      "Bash(black:*)",
+      "Bash(curl:*)",
+      "Bash(ruff check:*)"
     ]
   }
 }

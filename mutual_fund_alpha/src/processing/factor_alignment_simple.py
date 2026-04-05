@@ -5,7 +5,6 @@ Factor Alignment Module (Simple Version)
 import pandas as pd
 import numpy as np
 import os
-from typing import Dict, List, Optional
 from src.utils.logger import logger
 
 
@@ -152,7 +151,7 @@ def main():
         df_with_excess = compute_excess_returns(returns_df, aligned_factors)
 
         # Save aligned data
-        output_file = save_aligned_data(df_with_excess)
+        save_aligned_data(df_with_excess)
         logger.info("Factor alignment pipeline completed successfully")
 
         return df_with_excess

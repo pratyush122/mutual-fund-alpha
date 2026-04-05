@@ -38,7 +38,7 @@ class DatabaseClient:
             funds_data: List of fund dictionaries
         """
         try:
-            response = self.client.table("funds").upsert(funds_data).execute()
+            self.client.table("funds").upsert(funds_data).execute()
             logger.info(f"Upserted {len(funds_data)} funds")
         except Exception as e:
             logger.error(f"Failed to upsert funds: {e}")
@@ -56,7 +56,7 @@ class DatabaseClient:
             batch_size = 1000
             for i in range(0, len(nav_data), batch_size):
                 batch = nav_data[i : i + batch_size]
-                response = self.client.table("nav_history").upsert(batch).execute()
+                self.client.table("nav_history").upsert(batch).execute()
                 logger.info(f"Upserted batch of {len(batch)} NAV records")
         except Exception as e:
             logger.error(f"Failed to upsert NAV history: {e}")
@@ -70,7 +70,7 @@ class DatabaseClient:
             factor_data: List of factor data dictionaries
         """
         try:
-            response = self.client.table("factor_data").upsert(factor_data).execute()
+            self.client.table("factor_data").upsert(factor_data).execute()
             logger.info(f"Upserted {len(factor_data)} factor records")
         except Exception as e:
             logger.error(f"Failed to upsert factor data: {e}")
@@ -101,7 +101,7 @@ class DatabaseClient:
                         if key in record and isinstance(record[key], (dict, list)):
                             record[key] = json.dumps(record[key])
 
-                response = self.client.table("alpha_results").upsert(batch).execute()
+                self.client.table("alpha_results").upsert(batch).execute()
                 logger.info(f"Upserted batch of {len(batch)} alpha results")
         except Exception as e:
             logger.error(f"Failed to upsert alpha results: {e}")
@@ -193,7 +193,7 @@ class DatabaseClient:
             batch_size = 500
             for i in range(0, len(data), batch_size):
                 batch = data[i : i + batch_size]
-                response = self.client.table(table_name).insert(batch).execute()
+                self.client.table(table_name).insert(batch).execute()
                 logger.info(f"Inserted batch of {len(batch)} records into {table_name}")
         except Exception as e:
             logger.error(f"Failed to bulk insert into {table_name}: {e}")

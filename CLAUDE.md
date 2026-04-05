@@ -20,59 +20,133 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Repository Overview
+## Project Overview
 
-This is a mutual fund prediction project. The repository is currently in the initialization phase, and development has not yet begun in earnest.
+This is a mutual fund alpha decomposition tool that analyzes mutual fund performance using the Fama-French 3-factor model to identify funds with genuine stock-picking ability. The project includes:
 
-## Working with this Repository
+1. Data ingestion from AMFI (Association of Mutual Funds in India)
+2. Processing of mutual fund NAV data
+3. Factor model analysis using Fama-French 3-factor model
+4. Bootstrap testing for statistical significance
+5. Skill metrics computation
+6. Streamlit dashboard for visualization
+7. Power BI integration for advanced analytics
+8. Supabase database for data storage
 
-Since this repository is in the early stages:
+## Common Development Commands
 
-1. No build, lint, or test commands are currently established
-2. No specific architecture or code structure has been implemented
-3. No README.md or other documentation files exist yet
-
-## Initial Setup
-
-To begin development in this repository:
-
-1. Determine the appropriate technology stack for the mutual fund prediction project
-2. Initialize the project with the appropriate framework (Python, Node.js, etc.)
-3. Establish directory structure and coding standards
-4. Set up version control with git
-5. Create initial documentation including README.md
-
-## Future Development Considerations
-
-When implementing the mutual fund prediction system, consider:
-
-1. Data collection mechanisms for financial market data
-2. Machine learning models for prediction algorithms
-3. Data visualization components
-4. API interfaces for data retrieval
-5. Testing frameworks for validating predictions
-6. Security considerations for financial data handling
-
-## Commands for New Development
-
-When beginning development, typical commands might include:
-
+### Running Tests
 ```bash
-# Initialize project (to be determined based on chosen technology)
-npm init  # For Node.js projects
-python -m venv venv  # For Python projects
+# Install test dependencies
+pip install pytest statsmodels scikit-learn
 
-# Install dependencies (to be determined)
-npm install
-pip install -r requirements.txt
-
-# Run tests (to be established)
-npm test
-pytest
-
-# Start development server (to be established)
-npm start
-python app.py
+# Run all tests
+python -m pytest tests/ -v
 ```
 
-Note: Specific commands will depend on the technology stack chosen for implementation.
+### Running the Dashboard
+```bash
+# Install Streamlit
+pip install streamlit
+
+# Run the Streamlit dashboard
+python -m streamlit run mutual_fund_alpha/src/dashboard/app.py
+```
+
+### Installing Dependencies
+```bash
+# Install core dependencies
+pip install -r requirements.txt
+
+# Install development dependencies
+pip install -r requirements-dev.txt
+
+# Install additional packages needed for analysis
+pip install statsmodels scikit-learn streamlit
+```
+
+### Code Formatting and Linting
+```bash
+# Install formatting tools
+pip install black ruff
+
+# Check code formatting
+black --check .
+
+# Run linting
+ruff check .
+```
+
+## Code Architecture
+
+### Directory Structure
+- `mutual_fund_alpha/src/`: Main source code
+  - `analysis/`: Core analysis modules (factor models, bootstrap testing, skill metrics)
+  - `dashboard/`: Streamlit dashboard application
+  - `database/`: Database client and migration scripts
+  - `exports/`: Export functionality for Power BI
+  - `ingestion/`: Data ingestion modules
+  - `processing/`: Data processing modules
+  - `utils/`: Utility functions
+- `tests/`: Unit tests
+- `data/`: Data files (raw, processed, exports for Power BI)
+- `docs/`: Documentation
+- `scripts/`: Helper scripts
+
+### Key Modules
+
+1. **Factor Model Analysis** (`src/analysis/factor_model.py`)
+   - Implements Fama-French 3-factor model regression
+   - Computes alpha, beta coefficients, and statistical measures
+
+2. **Bootstrap Testing** (`src/analysis/bootstrap_test.py`)
+   - Performs bootstrap resampling to assess statistical significance of alpha
+
+3. **Skill Metrics** (`src/analysis/skill_metrics.py`)
+   - Computes composite skill scores and classifications
+
+4. **Dashboard** (`src/dashboard/app.py`)
+   - Streamlit application with multiple pages:
+     - Fund Screener
+     - Fund X-Ray Analysis
+     - Category Benchmarking
+     - Data Health
+
+5. **Database Integration** (`src/database/`)
+   - Client for Supabase database operations
+   - Migration and seeding scripts
+
+6. **Power BI Integration** (`src/exports/powerbi_connector.py`)
+   - Exports data in formats suitable for Power BI
+   - Scripts for refreshing data
+
+### Data Flow
+1. Raw data ingestion (AMFI NAV, Fama-French factors, benchmarks)
+2. Data processing (returns calculation, factor alignment)
+3. Statistical analysis (factor models, bootstrap testing)
+4. Skill metric computation
+5. Results storage in database
+6. Visualization through dashboard and Power BI exports
+
+## Troubleshooting
+
+### Common Issues
+1. **Missing dependencies**: Install all required packages with `pip install -r requirements.txt`
+2. **Database connection**: Ensure Supabase credentials are properly configured
+3. **Formatting issues**: Run Black formatter to fix CI/CD pipeline issues
+4. **Test failures**: Make sure all statistical packages are installed
+
+### CI/CD Pipeline
+The GitHub Actions workflow runs:
+1. Code formatting checks (Black)
+2. Linting (Ruff)
+3. Unit tests (pytest)
+4. Deployment to production (on main branch)
+
+To fix formatting issues, run:
+```bash
+black .
+git add .
+git commit -m "Fix formatting"
+git push
+```

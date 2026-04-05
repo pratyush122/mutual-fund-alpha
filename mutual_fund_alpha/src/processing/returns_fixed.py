@@ -5,7 +5,7 @@ Return Computation Module (Fixed Version)
 import pandas as pd
 import numpy as np
 import os
-from typing import Dict, List, Optional
+from typing import List
 from src.utils.logger import logger
 
 
@@ -157,7 +157,7 @@ def main():
             df_aligned = df_with_rolling
 
         # Save processed data
-        output_file = save_processed_returns(df_aligned)
+        save_processed_returns(df_aligned)
         logger.info("Return computation pipeline completed successfully")
 
         return df_aligned

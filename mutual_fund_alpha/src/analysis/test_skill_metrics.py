@@ -4,7 +4,6 @@ Test Skill Metrics Module
 
 import pandas as pd
 import os
-from typing import List, Dict
 from src.analysis.skill_metrics import compute_all_skill_metrics
 from src.utils.logger import logger
 
@@ -72,7 +71,7 @@ def test_skill_metrics() -> None:
             logger.info(f"Saved skill metrics to {output_file}")
 
             # Show summary statistics
-            print(f"\nSkill metrics summary:")
+            print("\nSkill metrics summary:")
             print(f"  Average Sharpe ratio: {skill_metrics['sharpe_ratio'].mean():.3f}")
             print(
                 f"  Average Information ratio: {skill_metrics['info_ratio'].mean():.3f}"
@@ -80,7 +79,7 @@ def test_skill_metrics() -> None:
             print(
                 f"  Average composite skill score: {skill_metrics['composite_skill_score'].mean():.1f}"
             )
-            print(f"  Top 5 funds by skill score:")
+            print("  Top 5 funds by skill score:")
             top_funds = skill_metrics.nlargest(5, "composite_skill_score")
             for _, fund in top_funds.iterrows():
                 print(f"    {fund['scheme_code']}: {fund['composite_skill_score']:.1f}")

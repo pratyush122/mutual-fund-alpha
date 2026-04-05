@@ -4,10 +4,8 @@ Streamlit Dashboard Application
 
 import streamlit as st
 import pandas as pd
-import numpy as np
 import plotly.express as px
-import plotly.graph_objects as go
-from typing import Dict, List
+from typing import Dict
 import os
 
 # Set page configuration

@@ -4,7 +4,7 @@ Fama-French 3-Factor Regression Model Module
 
 import pandas as pd
 import numpy as np
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List
 import statsmodels.api as sm
 from dataclasses import dataclass
 from src.utils.logger import logger
