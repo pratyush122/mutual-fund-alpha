@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 
+
 def read_checkpoint(checkpoint_file: str = ".checkpoint") -> str:
     """Read the current checkpoint from file."""
     try:
@@ -9,10 +10,12 @@ def read_checkpoint(checkpoint_file: str = ".checkpoint") -> str:
     except FileNotFoundError:
         return ""
 
+
 def write_checkpoint(step_name: str, checkpoint_file: str = ".checkpoint") -> None:
     """Write the current step name to the checkpoint file."""
     with open(checkpoint_file, "w") as f:
         f.write(step_name)
+
 
 def clear_checkpoint(checkpoint_file: str = ".checkpoint") -> None:
     """Clear the checkpoint file."""

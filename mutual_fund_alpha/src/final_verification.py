@@ -6,6 +6,7 @@ import os
 import pandas as pd
 from src.utils.logger import logger
 
+
 def verify_data_processing() -> bool:
     """Verify that data processing completed successfully."""
     logger.info("Verifying data processing...")
@@ -20,7 +21,7 @@ def verify_data_processing() -> bool:
             "data/processed/aligned_data.parquet",
             "data/processed/regression_results.parquet",
             "data/processed/skill_metrics.parquet",
-            "data/processed/bootstrap_results.parquet"
+            "data/processed/bootstrap_results.parquet",
         ]
 
         missing_files = []
@@ -30,7 +31,9 @@ def verify_data_processing() -> bool:
                 logger.warning(f"Missing file: {file_path}")
 
         if missing_files:
-            logger.error(f"Data processing verification failed. Missing files: {missing_files}")
+            logger.error(
+                f"Data processing verification failed. Missing files: {missing_files}"
+            )
             return False
 
         # Check file sizes
@@ -45,6 +48,7 @@ def verify_data_processing() -> bool:
         logger.error(f"Data processing verification failed: {e}")
         return False
 
+
 def verify_supabase_tables() -> bool:
     """Verify that Supabase tables can be accessed."""
     logger.info("Verifying Supabase tables...")
@@ -55,7 +59,9 @@ def verify_supabase_tables() -> bool:
 
         # This will fail if tables don't exist, which is expected for now
         logger.info("Supabase client initialized successfully")
-        logger.info("Note: Table existence verification skipped (tables need to be created manually in Supabase dashboard)")
+        logger.info(
+            "Note: Table existence verification skipped (tables need to be created manually in Supabase dashboard)"
+        )
 
         return True
 
@@ -63,6 +69,7 @@ def verify_supabase_tables() -> bool:
         logger.warning(f"Supabase verification warning: {e}")
         logger.info("This is expected if tables haven't been created in Supabase yet")
         return True  # Return True since this is not a critical failure
+
 
 def verify_dashboard() -> bool:
     """Verify that Streamlit dashboard can be imported."""
@@ -79,16 +86,14 @@ def verify_dashboard() -> bool:
         logger.error(f"Streamlit dashboard verification failed: {e}")
         return False
 
+
 def verify_docker() -> bool:
     """Verify that Docker files exist."""
     logger.info("Verifying Docker setup...")
 
     try:
         # Check that Docker files exist
-        docker_files = [
-            "docker/Dockerfile",
-            "docker/docker-compose.yml"
-        ]
+        docker_files = ["docker/Dockerfile", "docker/docker-compose.yml"]
 
         missing_files = []
         for file_path in docker_files:
@@ -107,6 +112,7 @@ def verify_docker() -> bool:
         logger.error(f"Docker verification failed: {e}")
         return False
 
+
 def verify_github_repo() -> bool:
     """Verify that GitHub repository exists."""
     logger.info("Verifying GitHub repository...")
@@ -117,12 +123,15 @@ def verify_github_repo() -> bool:
             logger.info("GitHub repository exists")
             return True
         else:
-            logger.warning("GitHub repository not found (this is OK for local development)")
+            logger.warning(
+                "GitHub repository not found (this is OK for local development)"
+            )
             return True  # Not a critical failure
 
     except Exception as e:
         logger.warning(f"GitHub verification warning: {e}")
         return True  # Not a critical failure
+
 
 def main() -> None:
     """Run final verification of the entire pipeline."""
@@ -134,7 +143,7 @@ def main() -> None:
         ("Supabase Tables", verify_supabase_tables),
         ("Streamlit Dashboard", verify_dashboard),
         ("Docker Setup", verify_docker),
-        ("GitHub Repository", verify_github_repo)
+        ("GitHub Repository", verify_github_repo),
     ]
 
     results = []
@@ -163,7 +172,10 @@ def main() -> None:
             f.write("COMPLETE")
         logger.info("Final status written to .checkpoint: COMPLETE")
     else:
-        logger.warning(f"⚠️  {total - passed} verification(s) failed. Please check the logs above.")
+        logger.warning(
+            f"⚠️  {total - passed} verification(s) failed. Please check the logs above."
+        )
+
 
 if __name__ == "__main__":
     main()

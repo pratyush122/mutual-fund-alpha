@@ -1,0 +1,200 @@
+{
+  "version": "1.0",
+  "report": {
+    "id": "mutual_fund_alpha_report",
+    "displayName": "Mutual Fund Alpha Analysis",
+    "description": "Power BI template for mutual fund alpha analysis",
+    "pages": [
+      {
+        "name": "Executive Summary",
+        "displayName": "Executive Summary",
+        "visuals": [
+          {
+            "name": "kpi_total_funds",
+            "type": "card",
+            "title": "Total Funds",
+            "query": "SELECT COUNT(*) FROM funds"
+          },
+          {
+            "name": "kpi_avg_alpha",
+            "type": "card",
+            "title": "Avg Alpha",
+            "query": "SELECT AVG(alpha) FROM alpha_results"
+          },
+          {
+            "name": "kpi_percent_skilled",
+            "type": "card",
+            "title": "% Skilled",
+            "query": "SELECT COUNT(CASE WHEN verdict = 'Skilled' THEN 1 END) * 100.0 / COUNT(*) FROM alpha_results"
+          },
+          {
+            "name": "kpi_data_date",
+            "type": "card",
+            "title": "Data Date",
+            "query": "SELECT MAX(date) FROM nav_history"
+          },
+          {
+            "name": "chart_verdict_breakdown",
+            "type": "donutChart",
+            "title": "Skilled vs Probably Skilled vs Luck Breakdown",
+            "query": "SELECT verdict, COUNT(*) as count FROM alpha_results GROUP BY verdict"
+          },
+          {
+            "name": "chart_top_funds",
+            "type": "barChart",
+            "title": "Top 10 Funds by Skill Score",
+            "query": "SELECT TOP 10 scheme_code, composite_skill_score FROM alpha_results ORDER BY composite_skill_score DESC"
+          }
+        ],
+        "filters": [
+          {
+            "name": "fund_category_filter",
+            "type": "slicer",
+            "title": "Fund Category Filter",
+            "query": "SELECT DISTINCT category FROM funds"
+          }
+        ]
+      },
+      {
+        "name": "Fund Screener",
+        "displayName": "Fund Screener",
+        "visuals": [
+          {
+            "name": "table_all_funds",
+            "type": "table",
+            "title": "All Funds",
+            "query": "SELECT scheme_code, alpha, t_stat_alpha, p_value, composite_skill_score, verdict FROM alpha_results",
+            "conditionalFormatting": [
+              {
+                "column": "verdict",
+                "conditions": [
+                  {
+                    "value": "Skilled",
+                    "backgroundColor": "green",
+                    "fontColor": "white"
+                  },
+                  {
+                    "value": "Probably Skilled",
+                    "backgroundColor": "orange",
+                    "fontColor": "white"
+                  },
+                  {
+                    "value": "Not Skilled",
+                    "backgroundColor": "red",
+                    "fontColor": "white"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "scatter_alpha_consistency",
+            "type": "scatterChart",
+            "title": "Alpha vs Consistency Score",
+            "query": "SELECT alpha, consistency_percentage FROM alpha_results"
+          }
+        ],
+        "filters": [
+          {
+            "name": "category_filter",
+            "type": "slicer",
+            "title": "Category Filter",
+            "query": "SELECT DISTINCT category FROM funds"
+          },
+          {
+            "name": "min_aum_filter",
+            "type": "slicer",
+            "title": "Min AUM Filter",
+            "query": "SELECT DISTINCT aum_cr FROM funds"
+          },
+          {
+            "name": "min_track_record_filter",
+            "type": "slicer",
+            "title": "Min Track Record Filter",
+            "query": "SELECT DISTINCT DATEDIFF(day, inception_date, GETDATE()) as track_record_days FROM funds"
+          },
+          {
+            "name": "verdict_filter",
+            "type": "slicer",
+            "title": "Verdict Filter",
+            "query": "SELECT DISTINCT verdict FROM alpha_results"
+          }
+        ]
+      },
+      {
+        "name": "Factor Analysis",
+        "displayName": "Factor Analysis",
+        "visuals": [
+          {
+            "name": "bar_factor_exposures",
+            "type": "clusteredBarChart",
+            "title": "Factor Exposures per Fund",
+            "query": "SELECT scheme_code, beta_mkt, beta_smb, beta_hml FROM alpha_results"
+          },
+          {
+            "name": "line_rolling_alpha",
+            "type": "lineChart",
+            "title": "Rolling Alpha Over Time",
+            "query": "SELECT start_date, alpha FROM alpha_results WHERE scheme_code = @selected_fund"
+          },
+          {
+            "name": "matrix_factor_heatmap",
+            "type": "matrix",
+            "title": "Factor Exposures Heatmap",
+            "query": "SELECT scheme_code, beta_mkt, beta_smb, beta_hml FROM alpha_results"
+          }
+        ],
+        "filters": [
+          {
+            "name": "fund_selector",
+            "type": "slicer",
+            "title": "Fund Selector",
+            "query": "SELECT DISTINCT scheme_code FROM alpha_results"
+          }
+        ]
+      },
+      {
+        "name": "Category Benchmarking",
+        "displayName": "Category Benchmarking",
+        "visuals": [
+          {
+            "name": "box_alpha_distribution",
+            "type": "boxPlot",
+            "title": "Alpha Distribution by Category",
+            "query": "SELECT category, alpha FROM funds f JOIN alpha_results a ON f.scheme_code = a.scheme_code"
+          },
+          {
+            "name": "column_sharpe_by_category",
+            "type": "columnChart",
+            "title": "Category Average Sharpe Ratio",
+            "query": "SELECT category, AVG(sharpe) as avg_sharpe FROM funds f JOIN alpha_results a ON f.scheme_code = a.scheme_code GROUP BY category"
+          },
+          {
+            "name": "table_category_stats",
+            "type": "table",
+            "title": "Category Stats",
+            "query": "SELECT category, AVG(alpha) as avg_alpha, AVG(consistency_percentage) as avg_consistency, COUNT(CASE WHEN verdict = 'Skilled' THEN 1 END) as skilled_count FROM funds f JOIN alpha_results a ON f.scheme_code = a.scheme_code GROUP BY category"
+          }
+        ]
+      },
+      {
+        "name": "Outlier Intelligence",
+        "displayName": "Outlier Intelligence",
+        "visuals": [
+          {
+            "name": "table_flagged_funds",
+            "type": "table",
+            "title": "Flagged Funds",
+            "query": "SELECT scheme_code, CASE WHEN composite_skill_score > 70 AND consistency_percentage < 40 THEN 'High alpha, inconsistent' WHEN p_value < 0.05 AND alpha < 0 THEN 'Statistically confirmed value destroyer' WHEN beta_mkt > 1.3 THEN 'High market risk taker' ELSE 'Normal' END as flag_reason FROM alpha_results"
+          },
+          {
+            "name": "line_flagged_vs_benchmark",
+            "type": "lineChart",
+            "title": "Flagged Fund Rolling Alpha vs Nifty 50",
+            "query": "SELECT date, alpha, benchmark_return FROM flagged_funds f JOIN benchmarks b ON f.date = b.date WHERE f.scheme_code = @selected_flagged_fund"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
+
 def run_migrations() -> None:
     """Run database migrations to create tables."""
     logger.info("Running database migrations...")
@@ -20,13 +21,17 @@ def run_migrations() -> None:
         key = os.getenv("SUPABASE_KEY")
 
         if not url or not key:
-            raise ValueError("SUPABASE_URL and SUPABASE_KEY must be set in environment variables")
+            raise ValueError(
+                "SUPABASE_URL and SUPABASE_KEY must be set in environment variables"
+            )
 
         # Create Supabase client
         client = create_client(url, key)
 
         # Read migration file
-        migration_file = "mutual_fund_alpha/src/database/migrations/001_create_tables.sql"
+        migration_file = (
+            "mutual_fund_alpha/src/database/migrations/001_create_tables.sql"
+        )
         if not os.path.exists(migration_file):
             # Try alternative path
             migration_file = "src/database/migrations/001_create_tables.sql"
@@ -42,7 +47,12 @@ def run_migrations() -> None:
         for command in commands:
             if command.upper().startswith("CREATE TABLE"):
                 # Extract table name
-                table_name = command.split()[2].replace("(", "").replace("`", "").replace('"', '')
+                table_name = (
+                    command.split()[2]
+                    .replace("(", "")
+                    .replace("`", "")
+                    .replace('"', "")
+                )
                 logger.info(f"Creating table: {table_name}")
 
                 # For Supabase, we need to use the REST API or run raw SQL
@@ -54,6 +64,7 @@ def run_migrations() -> None:
         logger.error(f"Database migrations failed: {e}")
         raise
 
+
 def run_migrations_via_sql() -> None:
     """Run database migrations using raw SQL commands."""
     logger.info("Running database migrations via SQL...")
@@ -64,13 +75,17 @@ def run_migrations_via_sql() -> None:
         key = os.getenv("SUPABASE_KEY")
 
         if not url or not key:
-            raise ValueError("SUPABASE_URL and SUPABASE_KEY must be set in environment variables")
+            raise ValueError(
+                "SUPABASE_URL and SUPABASE_KEY must be set in environment variables"
+            )
 
         # Create Supabase client
         client = create_client(url, key)
 
         # Read migration file
-        migration_file = "mutual_fund_alpha/src/database/migrations/001_create_tables.sql"
+        migration_file = (
+            "mutual_fund_alpha/src/database/migrations/001_create_tables.sql"
+        )
         if not os.path.exists(migration_file):
             # Try alternative path
             migration_file = "src/database/migrations/001_create_tables.sql"
@@ -80,11 +95,15 @@ def run_migrations_via_sql() -> None:
                     # We're in the project root, so use relative path
                     migration_file = "mutual_fund_alpha/src/database/migrations/001_create_tables.sql"
                 else:
-                    raise FileNotFoundError(f"Migration file not found: {migration_file}")
+                    raise FileNotFoundError(
+                        f"Migration file not found: {migration_file}"
+                    )
 
         if not os.path.exists(migration_file):
             # Try relative path from project root
-            migration_file = "mutual_fund_alpha/src/database/migrations/001_create_tables.sql"
+            migration_file = (
+                "mutual_fund_alpha/src/database/migrations/001_create_tables.sql"
+            )
 
         with open(migration_file, "r") as f:
             sql_content = f.read()
@@ -94,11 +113,25 @@ def run_migrations_via_sql() -> None:
 
         for statement in statements:
             statement = statement.strip()
-            if statement and not statement.startswith("--") and "CREATE TABLE" in statement:
+            if (
+                statement
+                and not statement.startswith("--")
+                and "CREATE TABLE" in statement
+            ):
                 # Extract table name
                 lines = statement.split("\n")
-                create_line = [line for line in lines if line.strip().upper().startswith("CREATE TABLE")][0]
-                table_name = create_line.split()[2].replace("(", "").replace("`", "").replace('"', '').replace(';', '')
+                create_line = [
+                    line
+                    for line in lines
+                    if line.strip().upper().startswith("CREATE TABLE")
+                ][0]
+                table_name = (
+                    create_line.split()[2]
+                    .replace("(", "")
+                    .replace("`", "")
+                    .replace('"', "")
+                    .replace(";", "")
+                )
 
                 logger.info(f"Processing table: {table_name}")
 
@@ -110,6 +143,7 @@ def run_migrations_via_sql() -> None:
     except Exception as e:
         logger.error(f"Database migrations failed: {e}")
         raise
+
 
 if __name__ == "__main__":
     run_migrations_via_sql()

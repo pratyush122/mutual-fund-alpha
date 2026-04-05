@@ -16,6 +16,7 @@ from src.utils.logger import logger
 # Initialize cache with 24-hour TTL
 cache = Cache(ttl_hours=24)
 
+
 @retry(n=3, backoff=2)
 def fetch_all_scheme_codes() -> List[Dict]:
     """
@@ -46,6 +47,7 @@ def fetch_all_scheme_codes() -> List[Dict]:
         logger.error(f"Failed to fetch scheme codes: {e}")
         raise
 
+
 @retry(n=3, backoff=2)
 def fetch_scheme_nav_history(scheme_code: str) -> Optional[pd.DataFrame]:
     """
@@ -72,12 +74,11 @@ def fetch_scheme_nav_history(scheme_code: str) -> Optional[pd.DataFrame]:
 
         # Extract NAV history
         nav_history = []
-        for item in data.get('data', []):
+        for item in data.get("data", []):
             try:
-                nav_history.append({
-                    'date': pd.to_datetime(item['date']),
-                    'nav': float(item['nav'])
-                })
+                nav_history.append(
+                    {"date": pd.to_datetime(item["date"]), "nav": float(item["nav"])}
+                )
             except (KeyError, ValueError):
                 # Skip invalid entries
                 continue
@@ -85,12 +86,14 @@ def fetch_scheme_nav_history(scheme_code: str) -> Optional[pd.DataFrame]:
         # Convert to DataFrame
         df = pd.DataFrame(nav_history)
         if not df.empty:
-            df = df.sort_values('date').reset_index(drop=True)
+            df = df.sort_values("date").reset_index(drop=True)
 
             # Cache the response
             cache.set(f"amfi_nav_{scheme_code}", nav_history)
 
-            logger.info(f"Fetched NAV history for scheme {scheme_code}: {len(df)} records")
+            logger.info(
+                f"Fetched NAV history for scheme {scheme_code}: {len(df)} records"
+            )
             return df
         else:
             logger.warning(f"No valid NAV data for scheme {scheme_code}")
@@ -99,6 +102,7 @@ def fetch_scheme_nav_history(scheme_code: str) -> Optional[pd.DataFrame]:
     except Exception as e:
         logger.error(f"Failed to fetch NAV history for scheme {scheme_code}: {e}")
         return None
+
 
 def fetch_top_n_equity_funds_by_aum(n: int = 200) -> List[Dict]:
     """
@@ -115,8 +119,11 @@ def fetch_top_n_equity_funds_by_aum(n: int = 200) -> List[Dict]:
 
         # Filter for equity funds and sort by AUM
         # Note: This is a simplified approach - in reality, you'd need to fetch AUM data separately
-        equity_schemes = [scheme for scheme in all_schemes
-                         if 'equity' in scheme.get('schemeName', '').lower()]
+        equity_schemes = [
+            scheme
+            for scheme in all_schemes
+            if "equity" in scheme.get("schemeName", "").lower()
+        ]
 
         # Return top N (this is a placeholder - real implementation would sort by actual AUM)
         top_schemes = equity_schemes[:n]
@@ -126,6 +133,7 @@ def fetch_top_n_equity_funds_by_aum(n: int = 200) -> List[Dict]:
     except Exception as e:
         logger.error(f"Failed to fetch top equity funds: {e}")
         return []
+
 
 def fetch_all_nav_data(output_dir: str = "data/raw/") -> pd.DataFrame:
     """
@@ -147,8 +155,8 @@ def fetch_all_nav_data(output_dir: str = "data/raw/") -> pd.DataFrame:
     failed_schemes = []
 
     for scheme in top_funds:
-        scheme_code = scheme.get('schemeCode')
-        scheme_name = scheme.get('schemeName')
+        scheme_code = scheme.get("schemeCode")
+        scheme_name = scheme.get("schemeName")
 
         if not scheme_code:
             continue
@@ -157,8 +165,8 @@ def fetch_all_nav_data(output_dir: str = "data/raw/") -> pd.DataFrame:
             nav_df = fetch_scheme_nav_history(scheme_code)
             if nav_df is not None and not nav_df.empty:
                 # Add scheme info
-                nav_df['scheme_code'] = scheme_code
-                nav_df['scheme_name'] = scheme_name
+                nav_df["scheme_code"] = scheme_code
+                nav_df["scheme_name"] = scheme_name
                 all_data.append(nav_df)
             else:
                 failed_schemes.append(scheme_code)
@@ -171,7 +179,7 @@ def fetch_all_nav_data(output_dir: str = "data/raw/") -> pd.DataFrame:
         combined_df = pd.concat(all_data, ignore_index=True)
 
         # Reorder columns
-        combined_df = combined_df[['scheme_code', 'scheme_name', 'date', 'nav']]
+        combined_df = combined_df[["scheme_code", "scheme_name", "date", "nav"]]
 
         # Save to parquet
         output_file = os.path.join(output_dir, "amfi_nav.parquet")
@@ -180,12 +188,15 @@ def fetch_all_nav_data(output_dir: str = "data/raw/") -> pd.DataFrame:
 
         # Log failures
         if failed_schemes:
-            logger.warning(f"Failed to fetch data for {len(failed_schemes)} schemes: {failed_schemes}")
+            logger.warning(
+                f"Failed to fetch data for {len(failed_schemes)} schemes: {failed_schemes}"
+            )
 
         return combined_df
     else:
         logger.error("No NAV data fetched successfully")
         return pd.DataFrame()
+
 
 if __name__ == "__main__":
     # Example usage

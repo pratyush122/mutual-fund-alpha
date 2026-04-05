@@ -8,6 +8,7 @@ from typing import List, Dict
 from src.analysis.factor_model import run_rolling_regressions, FactorResult
 from src.utils.logger import logger
 
+
 def test_factor_model() -> None:
     """Test the factor model with processed data."""
     logger.info("Testing factor model...")
@@ -20,7 +21,9 @@ def test_factor_model() -> None:
             return
 
         aligned_df = pd.read_parquet(aligned_file)
-        logger.info(f"Loaded aligned data: {len(aligned_df)} records for {aligned_df['scheme_code'].nunique()} funds")
+        logger.info(
+            f"Loaded aligned data: {len(aligned_df)} records for {aligned_df['scheme_code'].nunique()} funds"
+        )
 
         # Read factor data
         factors_file = "data/raw/fama_french_3factor.parquet"
@@ -36,7 +39,7 @@ def test_factor_model() -> None:
             excess_returns=aligned_df,
             factors=factors_df,
             window=63,  # 3 months for testing
-            step=21     # 1 month step
+            step=21,  # 1 month step
         )
 
         logger.info(f"Completed {len(results)} rolling regressions")
@@ -45,7 +48,9 @@ def test_factor_model() -> None:
         if results:
             print("\nSample regression results:")
             for i, result in enumerate(results[:5]):  # Show first 5
-                print(f"  {i+1}. Fund {result['scheme_code']}: alpha={result['alpha']:.6f}, t-stat={result['t_stat_alpha']:.2f}, R-squared={result['r_squared']:.3f}")
+                print(
+                    f"  {i+1}. Fund {result['scheme_code']}: alpha={result['alpha']:.6f}, t-stat={result['t_stat_alpha']:.2f}, R-squared={result['r_squared']:.3f}"
+                )
 
         # Save results
         if results:
@@ -58,6 +63,7 @@ def test_factor_model() -> None:
     except Exception as e:
         logger.error(f"Factor model test failed: {e}")
         raise
+
 
 if __name__ == "__main__":
     test_factor_model()

@@ -8,6 +8,7 @@ from typing import List, Dict
 from src.analysis.bootstrap_test import perform_bootstrap_tests, classify_funds_by_skill
 from src.utils.logger import logger
 
+
 def test_bootstrap_significance() -> None:
     """Test the bootstrap significance test."""
     logger.info("Testing bootstrap significance test...")
@@ -35,13 +36,17 @@ def test_bootstrap_significance() -> None:
         bootstrap_results = perform_bootstrap_tests(
             regression_results=regression_results,
             aligned_data=aligned_data,
-            n_bootstrap=100  # Reduced for faster testing
+            n_bootstrap=100,  # Reduced for faster testing
         )
 
         # Print sample results
         if not bootstrap_results.empty:
             print("\nSample bootstrap test results:")
-            print(bootstrap_results[['scheme_code', 'alpha', 'bootstrap_p_value', 'bootstrap_verdict']].head(10))
+            print(
+                bootstrap_results[
+                    ["scheme_code", "alpha", "bootstrap_p_value", "bootstrap_verdict"]
+                ].head(10)
+            )
 
             # Save results
             output_file = "data/processed/bootstrap_results.parquet"
@@ -63,13 +68,14 @@ def test_bootstrap_significance() -> None:
 
             # Show summary
             print(f"\nFund classification summary:")
-            verdict_counts = fund_classifications['overall_verdict'].value_counts()
+            verdict_counts = fund_classifications["overall_verdict"].value_counts()
             for verdict, count in verdict_counts.items():
                 print(f"  {verdict}: {count} funds")
 
     except Exception as e:
         logger.error(f"Bootstrap significance test failed: {e}")
         raise
+
 
 if __name__ == "__main__":
     test_bootstrap_significance()

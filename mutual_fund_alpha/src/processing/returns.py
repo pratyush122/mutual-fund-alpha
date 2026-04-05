@@ -8,6 +8,7 @@ import os
 from typing import Dict, List, Optional
 from src.utils.logger import logger
 
+
 def compute_daily_returns(df: pd.DataFrame) -> pd.DataFrame:
     """
     Compute daily log returns for mutual funds.
@@ -22,15 +23,15 @@ def compute_daily_returns(df: pd.DataFrame) -> pd.DataFrame:
 
     try:
         # Sort by scheme_code and date
-        df = df.sort_values(['scheme_code', 'date']).reset_index(drop=True)
+        df = df.sort_values(["scheme_code", "date"]).reset_index(drop=True)
 
         # Compute log returns: ln(NAV_t / NAV_{t-1})
-        df['daily_return'] = df.groupby('scheme_code')['nav'].apply(
+        df["daily_return"] = df.groupby("scheme_code")["nav"].apply(
             lambda x: np.log(x / x.shift(1))
         )
 
         # Drop NaN values (first entry for each fund will be NaN)
-        df = df.dropna(subset=['daily_return']).reset_index(drop=True)
+        df = df.dropna(subset=["daily_return"]).reset_index(drop=True)
 
         logger.info(f"Computed daily returns for {df['scheme_code'].nunique()} funds")
         return df
@@ -39,7 +40,10 @@ def compute_daily_returns(df: pd.DataFrame) -> pd.DataFrame:
         logger.error(f"Failed to compute daily returns: {e}")
         raise
 
-def compute_rolling_returns(df: pd.DataFrame, windows: List[int] = [21, 63]) -> pd.DataFrame:
+
+def compute_rolling_returns(
+    df: pd.DataFrame, windows: List[int] = [21, 63]
+) -> pd.DataFrame:
     """
     Compute rolling returns for specified windows.
 
@@ -55,9 +59,9 @@ def compute_rolling_returns(df: pd.DataFrame, windows: List[int] = [21, 63]) -> 
     try:
         # Add rolling return columns for each window
         for window in windows:
-            df[f'return_{window}d'] = df.groupby('scheme_code')['daily_return'].transform(
-                lambda x: x.rolling(window=window).sum()
-            )
+            df[f"return_{window}d"] = df.groupby("scheme_code")[
+                "daily_return"
+            ].transform(lambda x: x.rolling(window=window).sum())
 
         logger.info(f"Computed rolling returns for {len(windows)} windows")
         return df
@@ -66,7 +70,10 @@ def compute_rolling_returns(df: pd.DataFrame, windows: List[int] = [21, 63]) -> 
         logger.error(f"Failed to compute rolling returns: {e}")
         raise
 
-def align_trading_calendar(df: pd.DataFrame, benchmark_df: pd.DataFrame) -> pd.DataFrame:
+
+def align_trading_calendar(
+    df: pd.DataFrame, benchmark_df: pd.DataFrame
+) -> pd.DataFrame:
     """
     Align fund returns to trading calendar and drop non-trading days.
 
@@ -81,13 +88,13 @@ def align_trading_calendar(df: pd.DataFrame, benchmark_df: pd.DataFrame) -> pd.D
 
     try:
         # Get trading days from benchmark (assuming it has no gaps)
-        trading_days = benchmark_df['Date'].unique()
+        trading_days = benchmark_df["Date"].unique()
         trading_days = pd.to_datetime(trading_days)
         trading_days = pd.Series(trading_days).sort_values().values
 
         # Filter fund data to only include trading days
-        df['date'] = pd.to_datetime(df['date'])
-        aligned_df = df[df['date'].isin(trading_days)].reset_index(drop=True)
+        df["date"] = pd.to_datetime(df["date"])
+        aligned_df = df[df["date"].isin(trading_days)].reset_index(drop=True)
 
         logger.info(f"Aligned data to trading calendar: {len(aligned_df)} records")
         return aligned_df
@@ -96,7 +103,10 @@ def align_trading_calendar(df: pd.DataFrame, benchmark_df: pd.DataFrame) -> pd.D
         logger.error(f"Failed to align trading calendar: {e}")
         raise
 
-def save_processed_returns(df: pd.DataFrame, output_dir: str = "data/processed/") -> str:
+
+def save_processed_returns(
+    df: pd.DataFrame, output_dir: str = "data/processed/"
+) -> str:
     """
     Save processed returns data to parquet.
 
@@ -113,6 +123,7 @@ def save_processed_returns(df: pd.DataFrame, output_dir: str = "data/processed/"
     logger.info(f"Saved processed returns to {output_file}")
     return output_file
 
+
 def main():
     """Main function to process returns."""
     logger.info("Starting return computation pipeline...")
@@ -125,7 +136,9 @@ def main():
             return
 
         df = pd.read_parquet(nav_file)
-        logger.info(f"Loaded {len(df)} NAV records for {df['scheme_code'].nunique()} funds")
+        logger.info(
+            f"Loaded {len(df)} NAV records for {df['scheme_code'].nunique()} funds"
+        )
 
         # Compute daily returns
         df_with_returns = compute_daily_returns(df)
@@ -151,6 +164,7 @@ def main():
     except Exception as e:
         logger.error(f"Return computation pipeline failed: {e}")
         raise
+
 
 if __name__ == "__main__":
     main()

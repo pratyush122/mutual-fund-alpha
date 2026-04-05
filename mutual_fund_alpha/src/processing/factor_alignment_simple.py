@@ -8,7 +8,10 @@ import os
 from typing import Dict, List, Optional
 from src.utils.logger import logger
 
-def align_factors_to_returns(returns_df: pd.DataFrame, factors_df: pd.DataFrame) -> pd.DataFrame:
+
+def align_factors_to_returns(
+    returns_df: pd.DataFrame, factors_df: pd.DataFrame
+) -> pd.DataFrame:
     """
     Align Fama-French factors to same date index as fund returns.
 
@@ -23,15 +26,15 @@ def align_factors_to_returns(returns_df: pd.DataFrame, factors_df: pd.DataFrame)
 
     try:
         # Convert date columns to datetime
-        returns_df['date'] = pd.to_datetime(returns_df['date'])
-        factors_df['date'] = pd.to_datetime(factors_df['date'])
+        returns_df["date"] = pd.to_datetime(returns_df["date"])
+        factors_df["date"] = pd.to_datetime(factors_df["date"])
 
         # Get unique dates from returns data
-        return_dates = returns_df['date'].unique()
+        return_dates = returns_df["date"].unique()
         logger.info(f"Fund returns cover {len(return_dates)} unique dates")
 
         # Filter factors to only include dates that exist in returns
-        aligned_factors = factors_df[factors_df['date'].isin(return_dates)].copy()
+        aligned_factors = factors_df[factors_df["date"].isin(return_dates)].copy()
         logger.info(f"Aligned factors to {len(aligned_factors)} dates")
 
         return aligned_factors
@@ -40,7 +43,10 @@ def align_factors_to_returns(returns_df: pd.DataFrame, factors_df: pd.DataFrame)
         logger.error(f"Failed to align factors: {e}")
         raise
 
-def compute_excess_returns(returns_df: pd.DataFrame, factors_df: pd.DataFrame) -> pd.DataFrame:
+
+def compute_excess_returns(
+    returns_df: pd.DataFrame, factors_df: pd.DataFrame
+) -> pd.DataFrame:
     """
     Compute excess returns: fund_return - rf (risk-free rate).
 
@@ -55,21 +61,26 @@ def compute_excess_returns(returns_df: pd.DataFrame, factors_df: pd.DataFrame) -
 
     try:
         # Convert date columns to datetime
-        returns_df['date'] = pd.to_datetime(returns_df['date'])
-        factors_df['date'] = pd.to_datetime(factors_df['date'])
+        returns_df["date"] = pd.to_datetime(returns_df["date"])
+        factors_df["date"] = pd.to_datetime(factors_df["date"])
 
         # Merge returns with risk-free rate
-        merged_df = pd.merge(returns_df, factors_df[['date', 'rf']], on='date', how='left')
+        merged_df = pd.merge(
+            returns_df, factors_df[["date", "rf"]], on="date", how="left"
+        )
 
         # Compute excess returns
-        merged_df['excess_return'] = merged_df['daily_return'] - merged_df['rf']
+        merged_df["excess_return"] = merged_df["daily_return"] - merged_df["rf"]
 
-        logger.info(f"Computed excess returns for {merged_df['scheme_code'].nunique()} funds")
+        logger.info(
+            f"Computed excess returns for {merged_df['scheme_code'].nunique()} funds"
+        )
         return merged_df
 
     except Exception as e:
         logger.error(f"Failed to compute excess returns: {e}")
         raise
+
 
 def save_aligned_data(df: pd.DataFrame, output_dir: str = "data/processed/") -> str:
     """
@@ -87,6 +98,7 @@ def save_aligned_data(df: pd.DataFrame, output_dir: str = "data/processed/") -> 
     df.to_parquet(output_file, index=False)
     logger.info(f"Saved aligned data to {output_file}")
     return output_file
+
 
 def main():
     """Main function to align factors and compute excess returns."""
@@ -106,21 +118,23 @@ def main():
             df = pd.read_parquet(returns_file)
 
             # Sort by scheme_code and date
-            df = df.sort_values(['scheme_code', 'date']).reset_index(drop=True)
+            df = df.sort_values(["scheme_code", "date"]).reset_index(drop=True)
 
             # Compute log returns: ln(NAV_t / NAV_{t-1})
-            df['nav_shifted'] = df.groupby('scheme_code')['nav'].shift(1)
-            df['daily_return'] = np.log(df['nav'] / df['nav_shifted'])
+            df["nav_shifted"] = df.groupby("scheme_code")["nav"].shift(1)
+            df["daily_return"] = np.log(df["nav"] / df["nav_shifted"])
 
             # Drop the helper column and NaN values
-            df = df.drop(columns=['nav_shifted'])
-            df = df.dropna(subset=['daily_return']).reset_index(drop=True)
+            df = df.drop(columns=["nav_shifted"])
+            df = df.dropna(subset=["daily_return"]).reset_index(drop=True)
 
             returns_df = df
         else:
             returns_df = pd.read_parquet(returns_file)
 
-        logger.info(f"Loaded returns data: {len(returns_df)} records for {returns_df['scheme_code'].nunique()} funds")
+        logger.info(
+            f"Loaded returns data: {len(returns_df)} records for {returns_df['scheme_code'].nunique()} funds"
+        )
 
         # Read Fama-French factor data
         factors_file = "data/raw/fama_french_3factor.parquet"
@@ -146,6 +160,7 @@ def main():
     except Exception as e:
         logger.error(f"Factor alignment pipeline failed: {e}")
         raise
+
 
 if __name__ == "__main__":
     main()

@@ -8,6 +8,7 @@ from typing import List, Dict
 from src.analysis.skill_metrics import compute_all_skill_metrics
 from src.utils.logger import logger
 
+
 def test_skill_metrics() -> None:
     """Test the skill metrics computation."""
     logger.info("Testing skill metrics...")
@@ -20,7 +21,9 @@ def test_skill_metrics() -> None:
             return
 
         fund_data = pd.read_parquet(returns_file)
-        logger.info(f"Loaded fund returns: {len(fund_data)} records for {fund_data['scheme_code'].nunique()} funds")
+        logger.info(
+            f"Loaded fund returns: {len(fund_data)} records for {fund_data['scheme_code'].nunique()} funds"
+        )
 
         # Read benchmark data
         benchmark_file = "data/raw/benchmarks.parquet"
@@ -44,13 +47,23 @@ def test_skill_metrics() -> None:
         skill_metrics = compute_all_skill_metrics(
             fund_data=fund_data,
             benchmark_data=benchmark_data,
-            regression_results=regression_results
+            regression_results=regression_results,
         )
 
         # Print sample results
         if not skill_metrics.empty:
             print("\nSample skill metrics:")
-            print(skill_metrics[['scheme_code', 'sharpe_ratio', 'info_ratio', 'composite_skill_score', 'percentile_rank']].head())
+            print(
+                skill_metrics[
+                    [
+                        "scheme_code",
+                        "sharpe_ratio",
+                        "info_ratio",
+                        "composite_skill_score",
+                        "percentile_rank",
+                    ]
+                ].head()
+            )
 
             # Save results
             output_file = "data/processed/skill_metrics.parquet"
@@ -61,16 +74,21 @@ def test_skill_metrics() -> None:
             # Show summary statistics
             print(f"\nSkill metrics summary:")
             print(f"  Average Sharpe ratio: {skill_metrics['sharpe_ratio'].mean():.3f}")
-            print(f"  Average Information ratio: {skill_metrics['info_ratio'].mean():.3f}")
-            print(f"  Average composite skill score: {skill_metrics['composite_skill_score'].mean():.1f}")
+            print(
+                f"  Average Information ratio: {skill_metrics['info_ratio'].mean():.3f}"
+            )
+            print(
+                f"  Average composite skill score: {skill_metrics['composite_skill_score'].mean():.1f}"
+            )
             print(f"  Top 5 funds by skill score:")
-            top_funds = skill_metrics.nlargest(5, 'composite_skill_score')
+            top_funds = skill_metrics.nlargest(5, "composite_skill_score")
             for _, fund in top_funds.iterrows():
                 print(f"    {fund['scheme_code']}: {fund['composite_skill_score']:.1f}")
 
     except Exception as e:
         logger.error(f"Skill metrics test failed: {e}")
         raise
+
 
 if __name__ == "__main__":
     test_skill_metrics()

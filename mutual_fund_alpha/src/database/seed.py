@@ -8,6 +8,7 @@ from typing import List, Dict
 from src.database.client import get_db_client, DatabaseClient
 from src.utils.logger import logger
 
+
 def seed_funds_table(client: DatabaseClient) -> None:
     """Seed funds table with mock data."""
     try:
@@ -23,13 +24,15 @@ def seed_funds_table(client: DatabaseClient) -> None:
         funds_data = []
         for scheme_code in df["scheme_code"].unique():
             fund_df = df[df["scheme_code"] == scheme_code].iloc[0]
-            funds_data.append({
-                "scheme_code": scheme_code,
-                "scheme_name": fund_df["scheme_name"],
-                "category": "Equity",  # Mock category
-                "aum_cr": 1000.0,  # Mock AUM in crores
-                "inception_date": fund_df["date"].min().isoformat()
-            })
+            funds_data.append(
+                {
+                    "scheme_code": scheme_code,
+                    "scheme_name": fund_df["scheme_name"],
+                    "category": "Equity",  # Mock category
+                    "aum_cr": 1000.0,  # Mock AUM in crores
+                    "inception_date": fund_df["date"].min().isoformat(),
+                }
+            )
 
         # Upsert funds data
         client.upsert_funds(funds_data)
@@ -38,6 +41,7 @@ def seed_funds_table(client: DatabaseClient) -> None:
     except Exception as e:
         logger.error(f"Failed to seed funds table: {e}")
         raise
+
 
 def seed_nav_history_table(client: DatabaseClient) -> None:
     """Seed NAV history table with mock data."""
@@ -53,12 +57,14 @@ def seed_nav_history_table(client: DatabaseClient) -> None:
         # Convert to list of dictionaries
         nav_data = []
         for _, row in df.iterrows():
-            nav_data.append({
-                "scheme_code": row["scheme_code"],
-                "date": row["date"].isoformat(),
-                "nav": float(row["nav"]),
-                "daily_return": 0.0  # Will be calculated later
-            })
+            nav_data.append(
+                {
+                    "scheme_code": row["scheme_code"],
+                    "date": row["date"].isoformat(),
+                    "nav": float(row["nav"]),
+                    "daily_return": 0.0,  # Will be calculated later
+                }
+            )
 
         # Upsert NAV history data
         client.upsert_nav_history(nav_data)
@@ -67,6 +73,7 @@ def seed_nav_history_table(client: DatabaseClient) -> None:
     except Exception as e:
         logger.error(f"Failed to seed NAV history table: {e}")
         raise
+
 
 def seed_factor_data_table(client: DatabaseClient) -> None:
     """Seed factor data table with mock data."""
@@ -82,13 +89,15 @@ def seed_factor_data_table(client: DatabaseClient) -> None:
         # Convert to list of dictionaries
         factor_data = []
         for _, row in df.iterrows():
-            factor_data.append({
-                "date": row["date"].isoformat(),
-                "mkt_rf": float(row["mkt_rf"]),
-                "smb": float(row["smb"]),
-                "hml": float(row["hml"]),
-                "rf": float(row["rf"])
-            })
+            factor_data.append(
+                {
+                    "date": row["date"].isoformat(),
+                    "mkt_rf": float(row["mkt_rf"]),
+                    "smb": float(row["smb"]),
+                    "hml": float(row["hml"]),
+                    "rf": float(row["rf"]),
+                }
+            )
 
         # Upsert factor data
         client.upsert_factor_data(factor_data)
@@ -97,6 +106,7 @@ def seed_factor_data_table(client: DatabaseClient) -> None:
     except Exception as e:
         logger.error(f"Failed to seed factor data table: {e}")
         raise
+
 
 def seed_database() -> None:
     """Seed all database tables with mock data."""
@@ -116,6 +126,7 @@ def seed_database() -> None:
     except Exception as e:
         logger.error(f"Database seeding failed: {e}")
         raise
+
 
 if __name__ == "__main__":
     seed_database()

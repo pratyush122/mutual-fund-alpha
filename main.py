@@ -12,6 +12,7 @@ sys.path.insert(0, str(Path(__file__).parent / "mutual_fund_alpha" / "src"))
 from src.utils.logger import logger
 from src.utils.checkpoint import read_checkpoint, write_checkpoint
 
+
 def main():
     """Main execution function."""
     logger.info("Starting Mutual Fund Alpha Decomposition Tool")
@@ -24,6 +25,7 @@ def main():
     # This would orchestrate the steps defined in the project requirements
 
     logger.info("Mutual Fund Alpha Decomposition Tool completed")
+
 
 if __name__ == "__main__":
     main()

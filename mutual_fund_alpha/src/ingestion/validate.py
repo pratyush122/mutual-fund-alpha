@@ -9,6 +9,7 @@ from typing import Dict, List
 import logging
 from src.utils.logger import logger
 
+
 def validate_amfi_nav_data(df: pd.DataFrame) -> Dict[str, any]:
     """
     Validate AMFI NAV data.
@@ -22,12 +23,14 @@ def validate_amfi_nav_data(df: pd.DataFrame) -> Dict[str, any]:
     logger.info("Validating AMFI NAV data...")
     results = {
         "total_records": len(df),
-        "unique_funds": df["scheme_code"].nunique() if "scheme_code" in df.columns else 0,
+        "unique_funds": (
+            df["scheme_code"].nunique() if "scheme_code" in df.columns else 0
+        ),
         "date_range": {
             "start": str(df["date"].min()) if "date" in df.columns else None,
-            "end": str(df["date"].max()) if "date" in df.columns else None
+            "end": str(df["date"].max()) if "date" in df.columns else None,
         },
-        "issues": []
+        "issues": [],
     }
 
     # Check for required columns
@@ -68,6 +71,7 @@ def validate_amfi_nav_data(df: pd.DataFrame) -> Dict[str, any]:
     logger.info(f"AMFI NAV validation complete. Issues found: {len(results['issues'])}")
     return results
 
+
 def validate_fama_french_data(df: pd.DataFrame) -> Dict[str, any]:
     """
     Validate Fama-French factor data.
@@ -83,9 +87,9 @@ def validate_fama_french_data(df: pd.DataFrame) -> Dict[str, any]:
         "total_records": len(df),
         "date_range": {
             "start": str(df["date"].min()) if "date" in df.columns else None,
-            "end": str(df["date"].max()) if "date" in df.columns else None
+            "end": str(df["date"].max()) if "date" in df.columns else None,
         },
-        "issues": []
+        "issues": [],
     }
 
     # Check for required columns
@@ -102,8 +106,11 @@ def validate_fama_french_data(df: pd.DataFrame) -> Dict[str, any]:
             if null_count > 0:
                 results["issues"].append(f"Null {col}: {null_count}")
 
-    logger.info(f"Fama-French validation complete. Issues found: {len(results['issues'])}")
+    logger.info(
+        f"Fama-French validation complete. Issues found: {len(results['issues'])}"
+    )
     return results
+
 
 def validate_benchmark_data(df: pd.DataFrame) -> Dict[str, any]:
     """
@@ -121,13 +128,22 @@ def validate_benchmark_data(df: pd.DataFrame) -> Dict[str, any]:
         "unique_indices": df["ticker"].nunique() if "ticker" in df.columns else 0,
         "date_range": {
             "start": str(df["Date"].min()) if "Date" in df.columns else None,
-            "end": str(df["Date"].max()) if "Date" in df.columns else None
+            "end": str(df["Date"].max()) if "Date" in df.columns else None,
         },
-        "issues": []
+        "issues": [],
     }
 
     # Check for required columns
-    required_columns = ["Date", "Open", "High", "Low", "Close", "Volume", "ticker", "name"]
+    required_columns = [
+        "Date",
+        "Open",
+        "High",
+        "Low",
+        "Close",
+        "Volume",
+        "ticker",
+        "name",
+    ]
     missing_columns = [col for col in required_columns if col not in df.columns]
     if missing_columns:
         results["issues"].append(f"Missing columns: {missing_columns}")
@@ -140,8 +156,11 @@ def validate_benchmark_data(df: pd.DataFrame) -> Dict[str, any]:
             if null_count > 0:
                 results["issues"].append(f"Null {col}: {null_count}")
 
-    logger.info(f"Benchmark validation complete. Issues found: {len(results['issues'])}")
+    logger.info(
+        f"Benchmark validation complete. Issues found: {len(results['issues'])}"
+    )
     return results
+
 
 def run_all_validations() -> Dict[str, any]:
     """
@@ -151,10 +170,7 @@ def run_all_validations() -> Dict[str, any]:
         Dictionary with validation report
     """
     logger.info("Running all data validations...")
-    report = {
-        "timestamp": pd.Timestamp.now().isoformat(),
-        "validations": {}
-    }
+    report = {"timestamp": pd.Timestamp.now().isoformat(), "validations": {}}
 
     # Validate AMFI NAV data
     try:
@@ -174,7 +190,9 @@ def run_all_validations() -> Dict[str, any]:
             ff_df = pd.read_parquet(ff_file)
             report["validations"]["fama_french"] = validate_fama_french_data(ff_df)
         else:
-            report["validations"]["fama_french"] = {"error": f"File not found: {ff_file}"}
+            report["validations"]["fama_french"] = {
+                "error": f"File not found: {ff_file}"
+            }
     except Exception as e:
         report["validations"]["fama_french"] = {"error": str(e)}
 
@@ -185,13 +203,18 @@ def run_all_validations() -> Dict[str, any]:
             bench_df = pd.read_parquet(bench_file)
             report["validations"]["benchmark"] = validate_benchmark_data(bench_df)
         else:
-            report["validations"]["benchmark"] = {"error": f"File not found: {bench_file}"}
+            report["validations"]["benchmark"] = {
+                "error": f"File not found: {bench_file}"
+            }
     except Exception as e:
         report["validations"]["benchmark"] = {"error": str(e)}
 
     return report
 
-def save_validation_report(report: Dict[str, any], output_dir: str = "data/processed/") -> str:
+
+def save_validation_report(
+    report: Dict[str, any], output_dir: str = "data/processed/"
+) -> str:
     """
     Save validation report to JSON file.
 
@@ -223,6 +246,7 @@ def save_validation_report(report: Dict[str, any], output_dir: str = "data/proce
     logger.info(f"Saved validation report to {output_file}")
     return output_file
 
+
 def main():
     """Main function to run all validations and save report."""
     # Run validations
@@ -246,6 +270,7 @@ def main():
     # Save report
     report_file = save_validation_report(report)
     print(f"\nFull report saved to: {report_file}")
+
 
 if __name__ == "__main__":
     main()

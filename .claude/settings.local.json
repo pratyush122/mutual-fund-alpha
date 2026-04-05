@@ -17,7 +17,15 @@
       "Bash(bash)",
       "Bash(python:*)",
       "Bash(py:*)",
-      "Bash(git init:*)"
+      "Bash(git init:*)",
+      "Bash(git commit:*)",
+      "Bash(C:\\\\Program Files\\\\GitHub CLI\\\\gh.exe repo:*)",
+      "Bash(git remote:*)",
+      "Bash(git push:*)",
+      "Bash(C:\\\\Program Files\\\\GitHub CLI\\\\gh.exe run:*)",
+      "Bash(\"C:\\\\Program Files\\\\GitHub CLI\\\\gh.exe\" run view 23997506505 --log)",
+      "Bash(pip list:*)",
+      "Bash(git add:*)"
     ]
   }
 }

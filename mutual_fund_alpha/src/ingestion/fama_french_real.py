@@ -16,6 +16,7 @@ from src.utils.logger import logger
 # Initialize cache with 24-hour TTL
 cache = Cache(ttl_hours=24)
 
+
 @retry(n=3, backoff=2)
 def fetch_fama_french_factors() -> Optional[pd.DataFrame]:
     """
@@ -45,14 +46,14 @@ def fetch_fama_french_factors() -> Optional[pd.DataFrame]:
             # Find the CSV file (usually named something like F-F_Research_Data_Factors_daily.CSV)
             csv_filename = None
             for filename in zip_file.namelist():
-                if filename.endswith('.CSV') and 'Factors' in filename:
+                if filename.endswith(".CSV") and "Factors" in filename:
                     csv_filename = filename
                     break
 
             if not csv_filename:
                 # Try any CSV file if specific naming not found
                 for filename in zip_file.namelist():
-                    if filename.endswith('.CSV'):
+                    if filename.endswith(".CSV"):
                         csv_filename = filename
                         break
 
@@ -64,14 +65,16 @@ def fetch_fama_french_factors() -> Optional[pd.DataFrame]:
             # Read CSV content
             with zip_file.open(csv_filename) as csv_file:
                 # Read content and decode
-                content = csv_file.read().decode('latin1')
-                lines = content.split('\n')
+                content = csv_file.read().decode("latin1")
+                lines = content.split("\n")
 
                 # Find where data starts (look for first line with numeric data)
                 data_start = 0
                 headers_line = 0
                 for i, line in enumerate(lines):
-                    if line.strip() and ('Mkt-RF' in line or 'SMB' in line or 'HML' in line):
+                    if line.strip() and (
+                        "Mkt-RF" in line or "SMB" in line or "HML" in line
+                    ):
                         headers_line = i
                         continue
                     if line.strip() and line[0].isdigit():
@@ -80,11 +83,11 @@ def fetch_fama_french_factors() -> Optional[pd.DataFrame]:
 
                 # Extract headers
                 if headers_line < data_start:
-                    headers = lines[headers_line].strip().split(',')
+                    headers = lines[headers_line].strip().split(",")
                     # Clean headers
-                    headers = [h.strip().replace('"', '') for h in headers]
+                    headers = [h.strip().replace('"', "") for h in headers]
                 else:
-                    headers = ['date', 'mkt_rf', 'smb', 'hml', 'rf']
+                    headers = ["date", "mkt_rf", "smb", "hml", "rf"]
 
                 # Extract data lines
                 data_lines = lines[data_start:]
@@ -93,17 +96,35 @@ def fetch_fama_french_factors() -> Optional[pd.DataFrame]:
                 data_rows = []
                 for line in data_lines:
                     if line.strip() and line[0].isdigit():
-                        values = line.strip().split(',')
+                        values = line.strip().split(",")
                         if len(values) >= 5:  # Ensure we have enough columns
                             try:
                                 # Convert date and factor values
-                                date = pd.to_datetime(values[0].strip(), format='%Y%m%d')
+                                date = pd.to_datetime(
+                                    values[0].strip(), format="%Y%m%d"
+                                )
 
                                 # Convert factor values (they're multiplied by 100 in the data)
-                                mkt_rf = float(values[1]) / 100 if values[1].strip() != '' else 0
-                                smb = float(values[2]) / 100 if values[2].strip() != '' else 0
-                                hml = float(values[3]) / 100 if values[3].strip() != '' else 0
-                                rf = float(values[4]) / 100 if values[4].strip() != '' else 0
+                                mkt_rf = (
+                                    float(values[1]) / 100
+                                    if values[1].strip() != ""
+                                    else 0
+                                )
+                                smb = (
+                                    float(values[2]) / 100
+                                    if values[2].strip() != ""
+                                    else 0
+                                )
+                                hml = (
+                                    float(values[3]) / 100
+                                    if values[3].strip() != ""
+                                    else 0
+                                )
+                                rf = (
+                                    float(values[4]) / 100
+                                    if values[4].strip() != ""
+                                    else 0
+                                )
 
                                 data_rows.append([date, mkt_rf, smb, hml, rf])
                             except (ValueError, IndexError):
@@ -112,15 +133,23 @@ def fetch_fama_french_factors() -> Optional[pd.DataFrame]:
 
                 # Create DataFrame
                 if data_rows:
-                    df = pd.DataFrame(data_rows, columns=['date', 'mkt_rf', 'smb', 'hml', 'rf'])
+                    df = pd.DataFrame(
+                        data_rows, columns=["date", "mkt_rf", "smb", "hml", "rf"]
+                    )
 
                     # Remove any duplicates and sort by date
-                    df = df.drop_duplicates(subset=['date']).sort_values('date').reset_index(drop=True)
+                    df = (
+                        df.drop_duplicates(subset=["date"])
+                        .sort_values("date")
+                        .reset_index(drop=True)
+                    )
 
                     # Cache the data
-                    cache.set("fama_french_factors", df.to_dict('records'))
+                    cache.set("fama_french_factors", df.to_dict("records"))
 
-                    logger.info(f"Successfully fetched Fama-French factors: {len(df)} records")
+                    logger.info(
+                        f"Successfully fetched Fama-French factors: {len(df)} records"
+                    )
                     return df
                 else:
                     raise ValueError("No valid data found in CSV")
@@ -131,6 +160,7 @@ def fetch_fama_french_factors() -> Optional[pd.DataFrame]:
         # Fallback: Try to get factors from FRED API if available
         logger.info("Attempting to fetch factors from FRED API as fallback")
         return fetch_fred_factors()
+
 
 def fetch_fred_factors() -> Optional[pd.DataFrame]:
     """
@@ -149,6 +179,7 @@ def fetch_fred_factors() -> Optional[pd.DataFrame]:
         logger.error(f"Error in FRED fallback: {e}")
         return None
 
+
 def save_fama_french_data(df: pd.DataFrame, output_dir: str = "data/raw/") -> str:
     """
     Save Fama-French factor data to parquet.
@@ -165,6 +196,7 @@ def save_fama_french_data(df: pd.DataFrame, output_dir: str = "data/raw/") -> st
     df.to_parquet(output_file, index=False)
     logger.info(f"Saved Fama-French factors to {output_file}")
     return output_file
+
 
 if __name__ == "__main__":
     # Example usage

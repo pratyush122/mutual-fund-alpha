@@ -6,6 +6,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class Cache:
     """Simple file-based cache with TTL support."""
 
@@ -68,10 +69,7 @@ class Cache:
             value: Value to cache
         """
         cache_path = self._get_cache_path(key)
-        data = {
-            "timestamp": datetime.now().isoformat(),
-            "value": value
-        }
+        data = {"timestamp": datetime.now().isoformat(), "value": value}
 
         try:
             with open(cache_path, "w") as f:

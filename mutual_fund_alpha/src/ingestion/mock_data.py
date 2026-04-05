@@ -9,6 +9,7 @@ import os
 from typing import List, Dict
 import random
 
+
 def generate_mock_amfi_nav_data(n_funds: int = 50, days: int = 365) -> pd.DataFrame:
     """
     Generate mock AMFI NAV data for testing.
@@ -23,7 +24,7 @@ def generate_mock_amfi_nav_data(n_funds: int = 50, days: int = 365) -> pd.DataFr
     # Generate date range
     end_date = datetime.now()
     start_date = end_date - timedelta(days=days)
-    dates = pd.date_range(start=start_date, end=end_date, freq='D')
+    dates = pd.date_range(start=start_date, end=end_date, freq="D")
 
     # Remove weekends (mutual funds typically don't have NAV on weekends)
     dates = dates[dates.weekday < 5]
@@ -40,23 +41,29 @@ def generate_mock_amfi_nav_data(n_funds: int = 50, days: int = 365) -> pd.DataFr
         base_nav = random.uniform(10, 100)
 
         # Generate daily returns with some volatility
-        daily_returns = np.random.normal(0.0005, 0.02, len(dates))  # Mean return 0.05% daily, 2% volatility
+        daily_returns = np.random.normal(
+            0.0005, 0.02, len(dates)
+        )  # Mean return 0.05% daily, 2% volatility
 
         # Calculate NAV series
         navs = [base_nav]
-        for ret in daily_returns[:-1]:  # Exclude last return since we're calculating based on previous NAV
+        for ret in daily_returns[
+            :-1
+        ]:  # Exclude last return since we're calculating based on previous NAV
             new_nav = navs[-1] * (1 + ret)
             # Ensure NAV doesn't go too low
             new_nav = max(new_nav, 1.0)
             navs.append(new_nav)
 
         # Create DataFrame for this fund
-        fund_data = pd.DataFrame({
-            'scheme_code': scheme_code,
-            'scheme_name': scheme_name,
-            'date': dates,
-            'nav': navs
-        })
+        fund_data = pd.DataFrame(
+            {
+                "scheme_code": scheme_code,
+                "scheme_name": scheme_name,
+                "date": dates,
+                "nav": navs,
+            }
+        )
 
         all_data.append(fund_data)
 
@@ -64,6 +71,7 @@ def generate_mock_amfi_nav_data(n_funds: int = 50, days: int = 365) -> pd.DataFr
     combined_df = pd.concat(all_data, ignore_index=True)
 
     return combined_df
+
 
 def generate_mock_fama_french_factors(days: int = 365) -> pd.DataFrame:
     """
@@ -78,7 +86,7 @@ def generate_mock_fama_french_factors(days: int = 365) -> pd.DataFrame:
     # Generate date range (business days only)
     end_date = datetime.now()
     start_date = end_date - timedelta(days=days)
-    dates = pd.date_range(start=start_date, end=end_date, freq='B')  # Business days
+    dates = pd.date_range(start=start_date, end=end_date, freq="B")  # Business days
 
     # Generate realistic factor returns
     # Market risk premium (Mkt-RF): Mean ~0.03% daily, volatility ~1%
@@ -96,15 +104,12 @@ def generate_mock_fama_french_factors(days: int = 365) -> pd.DataFrame:
     rf = np.abs(rf)
 
     # Create DataFrame
-    factors_df = pd.DataFrame({
-        'date': dates,
-        'mkt_rf': mkt_rf,
-        'smb': smb,
-        'hml': hml,
-        'rf': rf
-    })
+    factors_df = pd.DataFrame(
+        {"date": dates, "mkt_rf": mkt_rf, "smb": smb, "hml": hml, "rf": rf}
+    )
 
     return factors_df
+
 
 def save_mock_data(output_dir: str = "data/raw/") -> None:
     """
@@ -130,6 +135,7 @@ def save_mock_data(output_dir: str = "data/raw/") -> None:
     factors_df.to_parquet(factors_file, index=False)
     print(f"Saved mock Fama-French factors to {factors_file}")
     print(f"  - {len(factors_df)} records")
+
 
 if __name__ == "__main__":
     save_mock_data()
