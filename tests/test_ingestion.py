@@ -8,10 +8,9 @@ import sys
 import os
 
 # Add the project root to the path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "mutual_fund_alpha"))
 
-from mutual_fund_alpha.src.ingestion.mock_data import (
+from src.ingestion.mock_data import (
     generate_mock_amfi_nav_data,
     generate_mock_fama_french_factors,
 )

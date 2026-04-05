@@ -9,7 +9,6 @@ import sys
 import os
 
 # Add the project root to the path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "mutual_fund_alpha"))
 
 from src.analysis.factor_model import run_factor_regression, FactorResult

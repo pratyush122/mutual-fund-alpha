@@ -30,7 +30,8 @@
       "Bash(pytest:*)",
       "Bash(black:*)",
       "Bash(curl:*)",
-      "Bash(ruff check:*)"
+      "Bash(ruff check:*)",
+      "Bash(pip show:*)"
     ]
   }
 }
