@@ -135,4 +135,4 @@ dmypy.json
 Thumbs.db
 
 # Data cache
-data/cache/
+data/cache/.claude/
