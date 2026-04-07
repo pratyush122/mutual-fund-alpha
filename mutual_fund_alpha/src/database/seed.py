@@ -31,7 +31,11 @@ def seed_funds_table(client: DatabaseClient) -> None:
                     "scheme_name": fund_df["scheme_name"],
                     "category": "Equity",  # Mock category
                     "aum_cr": 1000.0,  # Mock AUM in crores
-                    "inception_date": min_date.isoformat() if hasattr(min_date, 'isoformat') else str(min_date),
+                    "inception_date": (
+                        min_date.isoformat()
+                        if hasattr(min_date, "isoformat")
+                        else str(min_date)
+                    ),
                 }
             )
 
@@ -61,7 +65,11 @@ def seed_nav_history_table(client: DatabaseClient) -> None:
             nav_data.append(
                 {
                     "scheme_code": row["scheme_code"],
-                    "date": row["date"].isoformat() if hasattr(row["date"], 'isoformat') else str(row["date"]),
+                    "date": (
+                        row["date"].isoformat()
+                        if hasattr(row["date"], "isoformat")
+                        else str(row["date"])
+                    ),
                     "nav": float(row["nav"]),
                     "daily_return": 0.0,  # Will be calculated later
                 }
@@ -92,7 +100,11 @@ def seed_factor_data_table(client: DatabaseClient) -> None:
         for _, row in df.iterrows():
             factor_data.append(
                 {
-                    "date": row["date"].isoformat() if hasattr(row["date"], 'isoformat') else str(row["date"]),
+                    "date": (
+                        row["date"].isoformat()
+                        if hasattr(row["date"], "isoformat")
+                        else str(row["date"])
+                    ),
                     "mkt_rf": float(row["mkt_rf"]),
                     "smb": float(row["smb"]),
                     "hml": float(row["hml"]),
