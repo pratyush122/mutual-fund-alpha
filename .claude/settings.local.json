@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git rm:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(curl:*)",
+      "Bash(python:*)",
+      "Bash(streamlit run:*)",
+      "Bash(PYTHONPATH=mutual_fund_alpha python:*)",
+      "Bash(pip install:*)",
+      "Bash(docker:*)",
+      "Bash(ls:*)",
+      "Bash(PYTHONPATH=. python -c \"from src.ingestion.amfi_nav import fetch_all_scheme_codes; codes = fetch_all_scheme_codes\\(\\); print\\(f'Found {len\\(codes\\)} scheme codes'\\)\")",
+      "Bash(PYTHONPATH=. python main.py)",
+      "Bash(PYTHONPATH=. python src/processing/returns.py)",
+      "Bash(dir src\\\\dashboard:*)",
+      "Bash(dir src:*)",
+      "Bash(PYTHONPATH=. streamlit run src/dashboard/app.py)",
+      "Bash(PYTHONPATH=. streamlit run test_app.py --server.port 8501 --server.headless true)",
+      "Bash(pkill -f streamlit)",
+      "Bash(PYTHONPATH=. streamlit run:*)",
+      "Bash(PYTHONPATH=. python:*)",
+      "Bash(gh:*)",
+      "Bash(git remote:*)",
+      "Bash(git add:*)"
+    ]
+  }
+}

@@ -22,14 +22,16 @@ def seed_funds_table(client: DatabaseClient) -> None:
         # Extract unique funds
         funds_data = []
         for scheme_code in df["scheme_code"].unique():
-            fund_df = df[df["scheme_code"] == scheme_code].iloc[0]
+            fund_subset = df[df["scheme_code"] == scheme_code]
+            fund_df = fund_subset.iloc[0]
+            min_date = fund_subset["date"].min()
             funds_data.append(
                 {
                     "scheme_code": scheme_code,
                     "scheme_name": fund_df["scheme_name"],
                     "category": "Equity",  # Mock category
                     "aum_cr": 1000.0,  # Mock AUM in crores
-                    "inception_date": fund_df["date"].min().isoformat(),
+                    "inception_date": min_date.isoformat() if hasattr(min_date, 'isoformat') else str(min_date),
                 }
             )
 
@@ -59,7 +61,7 @@ def seed_nav_history_table(client: DatabaseClient) -> None:
             nav_data.append(
                 {
                     "scheme_code": row["scheme_code"],
-                    "date": row["date"].isoformat(),
+                    "date": row["date"].isoformat() if hasattr(row["date"], 'isoformat') else str(row["date"]),
                     "nav": float(row["nav"]),
                     "daily_return": 0.0,  # Will be calculated later
                 }
@@ -90,7 +92,7 @@ def seed_factor_data_table(client: DatabaseClient) -> None:
         for _, row in df.iterrows():
             factor_data.append(
                 {
-                    "date": row["date"].isoformat(),
+                    "date": row["date"].isoformat() if hasattr(row["date"], 'isoformat') else str(row["date"]),
                     "mkt_rf": float(row["mkt_rf"]),
                     "smb": float(row["smb"]),
                     "hml": float(row["hml"]),

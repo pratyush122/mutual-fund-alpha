@@ -1,0 +1,53 @@
+[33mcommit 524a0de0331cd6c7903d847391d20bc03c19055b[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author:     Pratyush Mishra <pm2pm1>
+AuthorDate: Sun Apr 5 20:15:07 2026 +0530
+Commit:     Pratyush Mishra <pm2pm1>
+CommitDate: Sun Apr 5 20:15:07 2026 +0530
+
+    Fix CI/CD pipeline issues
+    
+    - Add statsmodels to requirements.txt
+    - Add __init__.py files to make modules properly importable
+    - Fix import paths in test files
+    - Clean up redundant sys.path entries
+    
+    Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
+
+[33mcommit 8a7ce8367cf94f7c42f5c62692ce868b753e2f79[m
+Author:     Pratyush Mishra <pm2pm1>
+AuthorDate: Sun Apr 5 19:53:01 2026 +0530
+Commit:     Pratyush Mishra <pm2pm1>
+CommitDate: Sun Apr 5 19:53:01 2026 +0530
+
+    Fix linting issues and update codebase
+    
+    - Fix all Ruff linting issues (unused imports, unused variables)
+    - Run Black formatter to ensure consistent code formatting
+    - Verify all tests pass
+    - Update database migration and setup scripts
+    
+    Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
+
+[33mcommit 17a122159dc53feda9e345f85ff5f5a31c22509f[m
+Author:     Pratyush Mishra <pm2pm1>
+AuthorDate: Sun Apr 5 15:06:46 2026 +0530
+Commit:     Pratyush Mishra <pm2pm1>
+CommitDate: Sun Apr 5 15:06:46 2026 +0530
+
+    Fix formatting issues and update codebase
+    
+    - Run Black formatter on all files to fix CI/CD pipeline issues
+    - Update various modules with corrected implementations
+    - Add Power BI export functionality
+    - Improve database client and migration scripts
+    - Enhance dashboard with additional features
+    
+    Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
+
+[33mcommit 54bde2c8f3b6e2f9e1d2d32d500b8b4f2b160e01[m
+Author:     Pratyush Mishra <pm2pm1>
+AuthorDate: Sun Apr 5 11:44:28 2026 +0530
+Commit:     Pratyush Mishra <pm2pm1>
+CommitDate: Sun Apr 5 11:44:28 2026 +0530
+
+    Initial commit: Complete mutual fund alpha decomposition tool implementation
